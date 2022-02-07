@@ -1,0 +1,3 @@
+Flask
+line-bot-sdk
+python-dotenv # 環境変数取得
