@@ -7,7 +7,9 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, PostbackEvent, TextMessage, TextSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackAction
+    MessageEvent, PostbackEvent, TextMessage, TextSendMessage
+    , TemplateSendMessage, LocationMessage
+    , ButtonsTemplate, PostbackAction
 )
 import os, dotenv
 
@@ -74,6 +76,12 @@ def on_postback(line_event):
     data = line_event.postback.data
     line_bot_api.reply_message(line_event.reply_token, TextSendMessage("reply to postback text"))
 
+# 位置情報イベント
+@handler.add(MessageEvent, message=LocationMessage)
+def handle_location_message(line_event):
+    user_lat = line_event.message.latitude
+    user_lon = line_event.message.longitude
+    line_bot_api.reply_message(line_event.reply_token, TextSendMessage("reply to GPS message"))
 
 # ====================================================================
 
