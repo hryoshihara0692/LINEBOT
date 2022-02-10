@@ -7,10 +7,10 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent, PostbackEvent, TextMessage, TextSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackAction
 )
 import os, dotenv
- 
+
 app = Flask(__name__)
  
 # 環境変数取得
@@ -40,13 +40,40 @@ def callback():
     return 'OK'
 
 # 以降で ボット処理内容について記載 =========================================
- 
+
+# メッセージイベント
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    text_sent_by_user = event.message.text
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=text_sent_by_user))
+    # オウム返し処理
+    # text_sent_by_user = event.message.text
+    # line_bot_api.reply_message(
+    #     event.reply_token,
+    #     TextSendMessage(text=text_sent_by_user))
+
+    # ダイアログ形式処理
+    user_id = "U0a1a79622789287ae8d94df0f3a67d71"
+    buttons_template_message = TemplateSendMessage(
+        alt_text='Buttons template',
+        template=ButtonsTemplate(
+            title='Menu',
+            text='Please select',
+            actions=[
+                PostbackAction(
+                    label='postback',
+                    display_text='postback text',
+                    data='action=buy&itemid=1'
+                )
+            ]
+        )
+    )
+    line_bot_api.push_message(user_id, buttons_template_message)
+
+# ポストバックイベント
+@handler.add(PostbackEvent)
+def on_postback(line_event):
+    data = line_event.postback.data
+    line_bot_api.reply_message(line_event.reply_token, TextSendMessage("reply to postback text"))
+
 
 # ====================================================================
 
