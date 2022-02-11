@@ -1,5 +1,4 @@
 from flask import Flask, request, abort
- 
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -12,6 +11,7 @@ from linebot.models import (
     , ButtonsTemplate, PostbackAction
 )
 import os, dotenv
+import weather_forecast as wf
 
 app = Flask(__name__)
  
@@ -79,9 +79,14 @@ def on_postback(line_event):
 # 位置情報イベント
 @handler.add(MessageEvent, message=LocationMessage)
 def handle_location_message(line_event):
+    # 緯度経度を取得
     user_lat = line_event.message.latitude
     user_lon = line_event.message.longitude
-    line_bot_api.reply_message(line_event.reply_token, TextSendMessage("reply to GPS message"))
+    # 天気予報を取得
+    weather_forecast = wf.weather_forecast(user_lat, user_lon)
+    # 天気予報を返信
+    # line_bot_api.reply_message(line_event.reply_token, TextSendMessage("reply to GPS"))
+    line_bot_api.reply_message(line_event.reply_token, TextSendMessage(weather_forecast))
 
 # ====================================================================
 
