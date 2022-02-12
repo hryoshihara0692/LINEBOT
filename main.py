@@ -52,23 +52,40 @@ def handle_message(event):
     #     event.reply_token,
     #     TextSendMessage(text=text_sent_by_user))
 
-    # ダイアログ形式処理
-    user_id = "U0a1a79622789287ae8d94df0f3a67d71"
-    buttons_template_message = TemplateSendMessage(
-        alt_text='Buttons template',
-        template=ButtonsTemplate(
-            title='Menu',
-            text='Please select',
-            actions=[
-                PostbackAction(
-                    label='postback',
-                    display_text='postback text',
-                    data='action=buy&itemid=1'
-                )
-            ]
-        )
-    )
-    line_bot_api.push_message(user_id, buttons_template_message)
+    # # ダイアログ形式処理
+    # user_id = "U0a1a79622789287ae8d94df0f3a67d71"
+    # buttons_template_message = TemplateSendMessage(
+    #     alt_text='Buttons template',
+    #     template=ButtonsTemplate(
+    #         title='Menu',
+    #         text='Please select',
+    #         actions=[
+    #             PostbackAction(
+    #                 label='postback',
+    #                 display_text='postback text',
+    #                 data='action=buy&itemid=1'
+    #             )
+    #         ]
+    #     )
+    # )
+    # line_bot_api.push_message(user_id, buttons_template_message)
+
+    # 受信メッセージを区別
+    user_message = event.message.text
+    # 区別メッセージ
+    today_weather = "きょうの天気は？"
+    # 返信用メッセージ
+    default_message = "いまは天気を教えてあげることしかできないんだ…"
+    gps_request_message = "↓のリンクを押して天気を知りたい場所を教えて！"
+    gps_link = "https://line.me/R/nv/location/"
+
+    if user_message == today_weather:
+        # 現在地を催促する処理 → 位置情報イベントへ
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(gps_request_message + "\n\n" + gps_link))
+    else:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(default_message))
 
 # ポストバックイベント
 @handler.add(PostbackEvent)

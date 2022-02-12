@@ -21,7 +21,12 @@ def weather_forecast(latitude, longitude):
     one_hour = str(dt.hour + 1) + "時：" + response_json['hourly'][dt.hour-2]['weather'][0]['description']
     two_hour = str(dt.hour + 2) + "時：" + response_json['hourly'][dt.hour-1]['weather'][0]['description']
 
+    # 言語部分
+    chokkin = "送られた場所の天気予報はこんな感じみたいだよ！"
+    nl0 = "\n"
+    nl1 = "\n\n"
+
     # return用メッセージを作成
-    weather_forecast = now_hour + "\n" + one_hour + "\n" + two_hour
+    weather_forecast = chokkin + nl1 + now_hour + nl0 + one_hour + nl0 + two_hour
 
     return weather_forecast
