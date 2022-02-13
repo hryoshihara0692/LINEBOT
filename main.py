@@ -1,14 +1,22 @@
+from importlib.resources import contents
 from flask import Flask, request, abort
 from linebot import (
-    LineBotApi, WebhookHandler
+    LineBotApi
+    , WebhookHandler
 )
 from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, PostbackEvent, TextMessage, TextSendMessage
-    , TemplateSendMessage, LocationMessage
-    , ButtonsTemplate, PostbackAction
+    MessageEvent
+    , PostbackEvent
+    , TextMessage
+    , TextSendMessage
+    , TemplateSendMessage
+    , LocationMessage
+    , FlexSendMessage
+    , ButtonsTemplate
+    , PostbackAction
 )
 import os, dotenv
 import weather_forecast as wf
@@ -75,23 +83,25 @@ def handle_message(event):
     # 区別メッセージ
     today_weather = "きょうの天気は？"
     # 返信用メッセージ
-    default_message = "いまは天気を教えてあげることしかできないんだ…"
-    gps_request_message = "↓のリンクを押して天気を知りたい場所を教えて！"
     gps_link = "https://line.me/R/nv/location/"
+    default_message = "いまは天気を教えてあげることしかできないんだ…"
+    gps_request_message = "↑のリンクを押して天気を知りたい場所を教えて！\n(検索せずに送信すると現在地の天気が分かるよ！)"
 
     if user_message == today_weather:
         # 現在地を催促する処理 → 位置情報イベントへ
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(gps_request_message + "\n\n" + gps_link))
+            TextSendMessage(gps_link + "\n" + gps_request_message))
     else:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(default_message))
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(default_message))
 
-# ポストバックイベント
-@handler.add(PostbackEvent)
-def on_postback(line_event):
-    data = line_event.postback.data
-    line_bot_api.reply_message(line_event.reply_token, TextSendMessage("reply to postback text"))
+# # ポストバックイベント
+# @handler.add(PostbackEvent)
+# def on_postback(line_event):
+#     data = line_event.postback.data
+#     line_bot_api.reply_message(line_event.reply_token, TextSendMessage("reply to postback text"))
 
 # 位置情報イベント
 @handler.add(MessageEvent, message=LocationMessage)
@@ -100,11 +110,14 @@ def handle_location_message(line_event):
     user_lat = line_event.message.latitude
     user_lon = line_event.message.longitude
     # 天気予報を取得
-    weather_forecast = wf.weather_forecast(user_lat, user_lon)
+    flex_message_wf = wf.weather_forecast(user_lat, user_lon)
     # 天気予報を返信
-    # line_bot_api.reply_message(line_event.reply_token, TextSendMessage("reply to GPS"))
-    line_bot_api.reply_message(line_event.reply_token, TextSendMessage(weather_forecast))
-
+    line_bot_api.reply_message(
+        line_event.reply_token, FlexSendMessage(
+            alt_text='alt_text',
+            # contentsにdict型の値を渡す
+            contents=flex_message_wf
+        ))
 # ====================================================================
 
 # python main.py　で動作
