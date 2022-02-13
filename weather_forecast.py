@@ -18,17 +18,17 @@ def weather_forecast(latitude, longitude):
     dt = datetime.datetime.now()
 
     # 現在～3時間後のテキスト作成
-    now_hour = str(dt.hour-3) + "時(現在)"
-    one_hour = str(dt.hour-2) + "時"
-    two_hour = str(dt.hour-1) + "時"
-    three_hour = str(dt.hour) + "時"
+    now_hour    = str(dt.hour) + "時(現在)"
+    one_hour    = str(dt.hour+1) + "時"
+    two_hour    = str(dt.hour+2) + "時"
+    three_hour  = str(dt.hour+3) + "時"
 
     # (要)21～3時ころのUTC時刻とのズレ対策
     # 現在から2時間後までの天気を取得
-    now_hour_wf = weather_forecast_json['hourly'][dt.hour-3]['weather'][0]['description']
-    one_hour_wf = weather_forecast_json['hourly'][dt.hour-2]['weather'][0]['description']
-    two_hour_wf = weather_forecast_json['hourly'][dt.hour-1]['weather'][0]['description']
-    three_hour_wf = weather_forecast_json['hourly'][dt.hour]['weather'][0]['description']
+    now_hour_wf     = weather_forecast_json['hourly'][dt.hour-3]['weather'][0]['description']
+    one_hour_wf     = weather_forecast_json['hourly'][dt.hour-2]['weather'][0]['description']
+    two_hour_wf     = weather_forecast_json['hourly'][dt.hour-1]['weather'][0]['description']
+    three_hour_wf   = weather_forecast_json['hourly'][dt.hour]['weather'][0]['description']
 
     # きょうの天気予報 --- UTC時刻取得のため、hourly + 3時間が取得対象時間
     early_morning_wf   = weather_forecast_json['hourly'][3]['weather'][0]['description']
