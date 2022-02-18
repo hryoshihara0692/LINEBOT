@@ -84,7 +84,7 @@ def handle_message(event):
     today_weather = "きょうの天気は？"
     # 返信用メッセージ
     gps_link = "https://line.me/R/nv/location/"
-    default_message = "いまは天気を教えてあげることしかできないんだ…"
+    default_message = "おいらには天気を教えてあげることしかできないんだ…\n左のきょうの天気は？ボタンで天気を聞いてみてね！"
     gps_request_message = "↑のリンクを押して天気を知りたい場所を教えて！\n(検索せずに送信すると現在地の天気が分かるよ！)"
 
     if user_message == today_weather:
